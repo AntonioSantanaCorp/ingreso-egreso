@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav
       class="navbar default-layout col-sm-12 col-12 p-0 fixed-top d-flex flex-row"

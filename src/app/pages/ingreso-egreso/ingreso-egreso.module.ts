@@ -5,6 +5,8 @@ import { EstadisticaComponent } from './containers/estadistica/estadistica.compo
 import { IngresoEgresoComponent } from './containers/ingreso-egreso/ingreso-egreso.component';
 import { Routes } from '@angular/router';
 import { FinanzaCardComponent } from './components/finanza-card/finanza-card.component';
+import { IngresoEgresoFormComponent } from './components/ingreso-egreso-form/ingreso-egreso-form.component';
+import { TypeIngresoEgresoComponent } from './components/type-ingreso-egreso/type-ingreso-egreso.component';
 
 export const INGRESO_EGRESO_ROUTES: Routes = [
   { path: '', component: EstadisticaComponent },
@@ -18,6 +20,8 @@ export const INGRESO_EGRESO_ROUTES: Routes = [
     EstadisticaComponent,
     IngresoEgresoComponent,
     FinanzaCardComponent,
+    IngresoEgresoFormComponent,
+    TypeIngresoEgresoComponent,
   ],
   imports: [CommonModule],
 })

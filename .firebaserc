@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ingreso-egreso-app-e2985": {
+      "hosting": {
+        "ingresoEgresoApp": [
+          "ingreso-egreso-app-e2985"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ingreso-egreso-app-e2985"
+  }
+}
