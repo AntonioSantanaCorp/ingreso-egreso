@@ -1,32 +1,33 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './pages/auth/containers/login/login.component';
-import { RegisterComponent } from './pages/auth/containers/register/register.component';
-import { DashboardComponent } from './pages/dashboard/containers/dashboard/dashboard.component';
-import { IngresoEgresoComponent } from './pages/ingreso-egreso/containers/ingreso-egreso/ingreso-egreso.component';
+import { DashboardComponent } from './containers/dashboard/dashboard.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
+import { AppRoutingModule } from './app-routing.module';
+import { AuthModule } from './pages/auth/auth.module';
+import { IngresoEgresoModule } from './pages/ingreso-egreso/ingreso-egreso.module';
+
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegisterComponent,
     DashboardComponent,
-    IngresoEgresoComponent,
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    AuthModule,
+    IngresoEgresoModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
