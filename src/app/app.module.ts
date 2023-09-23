@@ -14,7 +14,10 @@ import { IngresoEgresoModule } from './pages/ingreso-egreso/ingreso-egreso.modul
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { provideAuth,getAuth } from '@angular/fire/auth';
+import { provideDatabase,getDatabase } from '@angular/fire/database';
 
 @NgModule({
   declarations: [
@@ -31,8 +34,11 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
     AuthModule,
     IngresoEgresoModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFireStorageModule,
     AngularFireAuthModule,
+    AngularFireDatabaseModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideDatabase(() => getDatabase())
   ],
   providers: [],
   bootstrap: [AppComponent],

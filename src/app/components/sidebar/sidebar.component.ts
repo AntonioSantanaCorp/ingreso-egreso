@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/pages/auth/shared/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -45,7 +47,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         </li>
 
         <li class="nav-item">
-          <a class="nav-link cursor">
+          <a (click)="logOut()" class="nav-link cursor">
             <i class="menu-icon fa fa-sign-out-alt"></i>
             <span class="menu-title">Cerrar sesión</span>
           </a>
@@ -55,4 +57,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   `,
   styles: [],
 })
-export class SidebarComponent {}
+export class SidebarComponent {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  logOut() {
+    this.authService.logout().then(() => this.router.navigate(['/login']));
+  }
+}

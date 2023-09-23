@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { setRegisterForm } from '../../core/utils/auth-form.util';
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'register',
@@ -112,9 +113,30 @@ export class RegisterComponent {
     if (this.form.invalid) return;
 
     const { nombre, email, password } = this.form.value;
+
+    this.showLoading();
+
     this.authService
       .crearUsuario(nombre!, email!, password!)
-      .then((credenciales) => this.router.navigate(['/']))
-      .catch((error) => console.error(error));
+      .then((credenciales) => {
+        Swal.close();
+        this.router.navigate(['/']);
+      })
+      .catch(({ message }) =>
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: message,
+        })
+      );
+  }
+
+  private showLoading() {
+    return Swal.fire({
+      title: 'Espere por favor',
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
   }
 }
