@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { setLoginForm } from '../../core/utils/login-form.util';
-import { AuthUser } from '../../../shared/models/main.model';
-import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+import * as uiActions from 'src/app/core/store/ui.actions';
+import { Subscription, tap } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'login',
@@ -60,8 +63,19 @@ import Swal from 'sweetalert2';
                     type="submit"
                     class="btn btn-primary submit-btn btn-block"
                     [disabled]="form.invalid"
+                    *ngIf="!cargando"
                   >
                     Login
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary submit-btn btn-block"
+                    [disabled]="true"
+                    *ngIf="cargando"
+                  >
+                    <i class="fa fa-spin fa-sync"></i>
+                    Espere ...
                   </button>
                 </div>
 
@@ -83,10 +97,30 @@ import Swal from 'sweetalert2';
     </div>
   `,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
+  private uiSubscription!: Subscription;
+
   protected readonly form = setLoginForm();
 
-  constructor(private authService: AuthService, private router: Router) {}
+  protected cargando = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private store: Store<AppState>
+  ) {}
+
+  ngOnInit(): void {
+    this.uiSubscription = this.store.select('ui').subscribe((ui) => {
+      console.log('is loading', ui.isLoading);
+
+      this.cargando = ui.isLoading;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.uiSubscription.unsubscribe();
+  }
 
   isInputValid(control: string) {
     return this.form.get(control)?.valid;
@@ -96,20 +130,24 @@ export class LoginComponent {
     if (this.form.invalid) return;
 
     const { email, password } = this.form.value;
-    this.showLoading();
+    this.store.dispatch(uiActions.isLoading());
     this.authService
       .loginUsuario(email!, password!)
       .then((credenciales) => {
-        Swal.close();
+        // Swal.close()
+
+        this.store.dispatch(uiActions.stopLoading());
         this.router.navigate(['/']);
       })
-      .catch(({ message }) =>
+      .catch(({ message }) => {
+        this.store.dispatch(uiActions.stopLoading());
+
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: message,
-        })
-      );
+        });
+      });
   }
 
   private showLoading() {

@@ -1,4 +1,5 @@
 export const environment = {
+  production: false,
   firebase: {
     projectId: 'ingreso-egreso-app-e2985',
     appId: '1:65614179107:web:200e59666b751cbbabfa96',
@@ -8,5 +9,4 @@ export const environment = {
     authDomain: 'ingreso-egreso-app-e2985.firebaseapp.com',
     messagingSenderId: '65614179107',
   },
-
 };

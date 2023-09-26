@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from './shared/shared.module';
 import { LoginComponent } from './login/containers/login/login.component';
 import { RegisterComponent } from './register/containers/register/register.component';
 import { LoginModule } from './login/login.module';
 import { RegisterModule } from './register/register.module';
+import { AuthService } from './core/services/auth.service';
 
 // export const routes: Routes = [
 //   {
@@ -32,7 +32,7 @@ export const routes: Routes = [
     RouterModule.forChild(routes),
     LoginModule,
     RegisterModule,
-    SharedModule.forRoot(),
   ],
+  providers: [AuthService],
 })
 export class AuthModule {}

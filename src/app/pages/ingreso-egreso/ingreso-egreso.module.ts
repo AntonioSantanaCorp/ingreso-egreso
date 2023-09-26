@@ -7,6 +7,7 @@ import { Routes } from '@angular/router';
 import { FinanzaCardComponent } from './components/finanza-card/finanza-card.component';
 import { IngresoEgresoFormComponent } from './components/ingreso-egreso-form/ingreso-egreso-form.component';
 import { TypeIngresoEgresoComponent } from './components/type-ingreso-egreso/type-ingreso-egreso.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 export const INGRESO_EGRESO_ROUTES: Routes = [
   { path: '', component: EstadisticaComponent },
@@ -23,6 +24,6 @@ export const INGRESO_EGRESO_ROUTES: Routes = [
     IngresoEgresoFormComponent,
     TypeIngresoEgresoComponent,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
 })
 export class IngresoEgresoModule {}

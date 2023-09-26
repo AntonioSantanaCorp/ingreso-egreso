@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/pages/auth/shared/services/auth.service';
-
+import { AuthService } from 'src/app/pages/auth/core/services/auth.service';
 @Component({
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,7 +11,7 @@ import { AuthService } from 'src/app/pages/auth/shared/services/auth.service';
           <div class="nav-link">
             <div class="user-wrapper">
               <div class="profile-image">
-                <img src="assets/images/faces/face1.jpg" alt="profile image" />
+                <img src="assets/images/faces-clipart/pic-1.png" alt="profile image" />
               </div>
 
               <div class="text-wrapper">

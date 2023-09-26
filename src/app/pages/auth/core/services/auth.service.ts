@@ -1,32 +1,45 @@
 import { Injectable } from '@angular/core';
-import { map, tap } from 'rxjs';
+import { Subscription, map, tap } from 'rxjs';
 import { Usuario } from '../models/main.model';
 import firebase from 'firebase/compat/app';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+import * as authActions from '../store/auth.actions';
 
 @Injectable()
 export class AuthService {
-  private currentUser: firebase.User | null = null;
-
-  readonly authUserState$ = this.auth.authState.pipe(
-    tap((user) => (this.currentUser = user))
-  );
+  private userSubscription!: Subscription;
 
   get isAuth() {
     return this.auth.authState.pipe(map(Boolean));
   }
 
-  get uid() {
-    return this.currentUser?.uid;
-  }
+  constructor(
+    private auth: AngularFireAuth,
+    private db: AngularFireDatabase,
+    private store: Store<AppState>
+  ) {}
 
-  get user() {
-    return this.currentUser;
-  }
+  initAuthListener() {
+    this.auth.authState.subscribe((fbUser) => {
+      if (!fbUser) {
+        this.userSubscription?.unsubscribe();
+        this.store.dispatch(authActions.unSetUser());
+        return;
+      }
 
-  constructor(private auth: AngularFireAuth, private db: AngularFireDatabase) {}
+      this.userSubscription = this.db
+        .object(`usuarios/${fbUser.uid}`)
+        .valueChanges()
+        .subscribe((userInfo: any) => {
+          const [key] = Object.keys(userInfo);
+          this.store.dispatch(authActions.setUser(userInfo[key]));
+        });
+    });
+  }
 
   crearUsuario(nombre: string, email: string, password: string) {
     return this.auth
