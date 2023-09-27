@@ -5,7 +5,8 @@ export function setIngresoEgresoForm() {
   const formBuilder = inject(FormBuilder);
 
   return formBuilder.group({
-    description: ['', Validators.required],
-    monto: [0, Validators.required],    
+    descripcion: ['', Validators.required],
+    monto: [0, { validators: Validators.required, nonNullable: true }],
+    tipo: ['ingreso', { validators: Validators.required, nonNullable: true }],
   });
 }

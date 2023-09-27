@@ -14,14 +14,16 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
             <ng-content select="p"></ng-content>
 
             <div class="fluid-container">
-              <h3 class="font-weight-medium text-right mb-0">{{ amount }}</h3>
+              <h3 class="font-weight-medium text-right mb-0">
+                {{ amount | currency }}
+              </h3>
             </div>
           </div>
         </div>
 
         <p class="text-muted mt-3 mb-0">
           <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>
-          <span> {{ lowerPercentage }} lower growth</span>
+          <span> {{ lowerPercentage }} items</span>
         </p>
       </div>
     </div>
@@ -29,8 +31,8 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 })
 export class FinanzaCardComponent {
   @Input({ required: true })
-  public amount!: string;
+  public amount: number | null = 0;
 
   @Input({ required: true })
-  public lowerPercentage!: string;
+  public lowerPercentage: number | null = 0;
 }

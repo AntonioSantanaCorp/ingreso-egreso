@@ -1,7 +1,12 @@
 import { Record } from 'immutable';
 import { IngresoEgresoType } from '../types/main.type';
 
-const ingresoEgresoDefault = { descripcion: '', monto: 0, tipo: '' };
+export const ingresoEgresoDefault: IngresoEgresoType = {
+  descripcion: '',
+  monto: 0,
+  tipo: 'ingreso',
+  uid: '',
+};
 export class IngresoEgreso extends Record<IngresoEgresoType>(
   ingresoEgresoDefault
 ) {

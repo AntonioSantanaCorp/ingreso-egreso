@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subscription, map, tap } from 'rxjs';
+import { Subscription, filter, map, of, switchMap, tap } from 'rxjs';
 import { Usuario } from '../models/main.model';
 import firebase from 'firebase/compat/app';
 
@@ -8,13 +8,50 @@ import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducer';
 import * as authActions from '../store/auth.actions';
+import * as ingresoEgresoActions from 'src/app/pages/ingreso-egreso/core/store/ingreso-egreso.actions';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
-  private userSubscription!: Subscription;
+  private _user: Usuario | null = null;
+
+  public readonly user$ = this.auth.authState.pipe(
+    switchMap((fbUser) => {
+      if (!fbUser) {
+        this._user = null;
+        this.store.dispatch(authActions.unSetUser());
+        this.store.dispatch(ingresoEgresoActions.unSetItems());
+
+        return of(null);
+      }
+
+      return this.db
+        .object(`usuarios/${fbUser.uid}`)
+        .valueChanges()
+        .pipe(
+          map((result: any) => {
+            const [key] = Object.keys(result);
+            return result[key];
+          }),
+          tap((userInfo) => {
+            this._user = userInfo;
+            this.store.dispatch(authActions.setUser({ user: userInfo }));
+          })
+        );
+    })
+  );
 
   get isAuth() {
     return this.auth.authState.pipe(map(Boolean));
+  }
+
+  get fbUser$() {
+    return this.auth.authState.pipe(filter(Boolean));
+  }
+
+  get uid() {
+    return this._user?.uid;
   }
 
   constructor(
@@ -22,24 +59,6 @@ export class AuthService {
     private db: AngularFireDatabase,
     private store: Store<AppState>
   ) {}
-
-  initAuthListener() {
-    this.auth.authState.subscribe((fbUser) => {
-      if (!fbUser) {
-        this.userSubscription?.unsubscribe();
-        this.store.dispatch(authActions.unSetUser());
-        return;
-      }
-
-      this.userSubscription = this.db
-        .object(`usuarios/${fbUser.uid}`)
-        .valueChanges()
-        .subscribe((userInfo: any) => {
-          const [key] = Object.keys(userInfo);
-          this.store.dispatch(authActions.setUser(userInfo[key]));
-        });
-    });
-  }
 
   crearUsuario(nombre: string, email: string, password: string) {
     return this.auth

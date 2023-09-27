@@ -13,14 +13,7 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [SidebarComponent, FooterComponent, NavbarComponent],
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   exports: [SidebarComponent, FooterComponent, NavbarComponent],
 })
-export class SharedModule implements ModuleWithProviders<SharedModule> {
-
-  static forRoot(): ModuleWithProviders<SharedModule> {
-    return {
-      ngModule: SharedModule,
-    };
-  }
-}
+export class SharedModule {}

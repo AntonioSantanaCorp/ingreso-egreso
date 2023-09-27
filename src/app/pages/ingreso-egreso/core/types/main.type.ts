@@ -1,6 +1,6 @@
 export type IngresoEgresoType = {
   descripcion: string;
   monto: number;
-  tipo: string;
+  tipo: 'ingreso' | 'egreso';
   uid?: string;
 };

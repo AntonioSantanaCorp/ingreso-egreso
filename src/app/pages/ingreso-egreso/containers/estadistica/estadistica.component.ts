@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { map, shareReplay } from 'rxjs';
+import { AppState } from 'src/app/app.reducer';
 
 @Component({
   selector: 'estadistica',
@@ -6,8 +9,8 @@ import { Component } from '@angular/core';
     <div class="row">
       <div class="col-6">
         <finanza-card
-          [amount]="ingresoAmount"
-          [lowerPercentage]="ingresoLowerPercentage"
+          [amount]="totalIngresos$ | async"
+          [lowerPercentage]="ingresoCount$ | async"
         >
           <i class="fa fa-money-bill-alt text-success icon-lg"></i>
           <p class="mb-0 text-right">Ingresos</p>
@@ -16,22 +19,52 @@ import { Component } from '@angular/core';
 
       <div class="col-6">
         <finanza-card
-          [amount]="egresoAmount"
-          [lowerPercentage]="egresoLowerPercentage"
+          [amount]="totalEgresos$ | async"
+          [lowerPercentage]="egresoCount$ | async"
         >
           <i class="fa fa-shipping-fast text-danger icon-lg"></i>
-          <p class="mb-0 text-right">Ingresos</p>
+          <p class="mb-0 text-right">Egreso</p>
         </finanza-card>
       </div>
     </div>
+
+    <ingreso-egreso-grafica
+      [totalIngresos]="totalIngresos$ | async"
+      [totalEgresos]="totalEgresos$ | async"
+    >
+    </ingreso-egreso-grafica>
   `,
 })
 export class EstadisticaComponent {
-  ingresoAmount = '$65,650';
-  ingresoLowerPercentage = '63%';
+  private readonly _list$ = this.store
+    .select('ingresosEgresos')
+    .pipe(map(({ items }) => items));
 
-  egresoAmount = '$65,650';
-  egresoLowerPercentage = '63%';
+  private readonly _ingresos$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'ingreso'))
+  );
+
+  private readonly _egresos$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'egreso'))
+  );
+
+  protected readonly ingresoCount$ = this._ingresos$.pipe(
+    map((items) => items.count())
+  );
+
+  protected readonly egresoCount$ = this._egresos$.pipe(
+    map((items) => items.count())
+  );
+
+  protected readonly totalIngresos$ = this._ingresos$.pipe(
+    map((items) => items.reduce((acum, { monto }) => acum + monto, 0))
+  );
+
+  protected readonly totalEgresos$ = this._egresos$.pipe(
+    map((items) => items.reduce((acum, { monto }) => acum + monto, 0))
+  );
+
+  constructor(private store: Store<AppState>) {}
 
   ngOnInit() {}
 }

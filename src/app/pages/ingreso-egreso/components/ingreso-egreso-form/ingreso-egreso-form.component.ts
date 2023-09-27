@@ -1,5 +1,21 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { setIngresoEgresoForm } from '../../core/utils/ingreso-form.util';
+import { IngresoEgresoType } from '../../core/types/main.type';
+import {
+  IngresoEgreso,
+  ingresoEgresoDefault,
+} from '../../core/models/main.model';
 
 @Component({
   selector: 'ingreso-egreso-form',
@@ -30,38 +46,102 @@ import { setIngresoEgresoForm } from '../../core/utils/ingreso-form.util';
       </div>
 
       <div class="form-group">
-        <label>Tipo</label>
+        <label>
+          Tipo seleccionado:
+          {{ ingresoForm.get('tipo')?.value | titlecase }}
+        </label>
         <br />
-        <type-ingreso-egreso></type-ingreso-egreso>
+        <type-ingreso-egreso formControlName="tipo"></type-ingreso-egreso>
       </div>
 
       <hr />
       <button
-        type="submit"
+        type="button"
         class="btn btn-success mr-2"
-        [disabled]="ingresoForm.invalid"
+        *ngIf="!isEdit"
+        (click)="onCreate()"
+        [disabled]="ingresoForm.invalid || isLoading"
       >
-        <i class="fa fa-save"></i>
-        Agregar
+        <i class="fa fa-save" *ngIf="!isLoading"></i>
+        <i class="fa fa-spin fa-sync" *ngIf="isLoading"></i>
+        {{ isLoading ? 'Guardando' : 'Agregar' }}
       </button>
 
-      <!-- 
-                <button disabled class="btn btn-success mr-2">
-                  <i class="fa fa-spin fa-sync"></i>
-                  Espere por favor...
-                </button> 
-              -->
-
-      <button type="button" class="btn btn-light" (click)="reset()">
-        Cancelar
+      <button
+        type="button"
+        class="btn btn-success mr-2"
+        *ngIf="isEdit"
+        (click)="onUpdate()"
+        [disabled]="ingresoForm.invalid || isLoading"
+      >
+        <i class="fa fa-save" *ngIf="!isLoading"></i>
+        <i class="fa fa-spin fa-sync" *ngIf="isLoading"></i>
+        {{ isLoading ? 'Guardando' : 'Guardar Cambios' }}
       </button>
+
+      <button
+        type="button"
+        class="btn btn-light mr-2"
+        *ngIf="isEdit"
+        (click)="reset()"
+      >
+        Reset
+      </button>
+
+      <a class="btn btn-light" routerLink="/detalle"> Cancelar </a>
     </form>
   `,
 })
-export class IngresoEgresoFormComponent {
+export class IngresoEgresoFormComponent implements OnChanges {
   protected ingresoForm = setIngresoEgresoForm();
 
-  reset() {
-    this.ingresoForm.reset();
+  @Input({
+    transform: (value: IngresoEgresoType | null) =>
+      value ?? ingresoEgresoDefault,
+  })
+  public ingresoEgreso!: IngresoEgresoType;
+
+  @Input()
+  public isLoading: boolean | null = false;
+
+  @Input()
+  public isEdit: boolean | null = false;
+
+  @Output()
+  public crear = new EventEmitter<IngresoEgresoType>();
+
+  @Output()
+  public guardarCambios = new EventEmitter<IngresoEgresoType>();
+
+  constructor(private changeDetector: ChangeDetectorRef) {}
+
+  ngOnChanges(_: SimpleChanges): void {
+    this.setInitFormValue();
+  }
+
+  protected onCreate() {
+    if (this.ingresoForm.invalid) return;
+
+    this.crear.emit(this.ingresoForm.value as IngresoEgresoType);
+  }
+
+  protected onUpdate() {
+    if (this.ingresoForm.invalid) return;
+
+    this.guardarCambios.emit({
+      ...this.ingresoEgreso,
+      ...this.ingresoForm.value,
+    } as IngresoEgresoType);
+  }
+
+  public reset(ingresoEgreso?: IngresoEgresoType) {
+    this.ingresoForm.reset({ ...ingresoEgreso } ?? this.ingresoEgreso);
+    // this.changeDetector.markForCheck();
+  }
+
+  private setInitFormValue() {
+    if (!this.ingresoEgreso) return;
+
+    this.ingresoForm.patchValue(this.ingresoEgreso);
   }
 }
