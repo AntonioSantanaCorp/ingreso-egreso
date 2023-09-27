@@ -40,31 +40,25 @@ export class EstadisticaComponent {
     .select('ingresosEgresos')
     .pipe(map(({ items }) => items));
 
-  private readonly _ingresos$ = this._list$.pipe(
-    map((items) => items.filter(({ tipo }) => tipo === 'ingreso'))
-  );
-
-  private readonly _egresos$ = this._list$.pipe(
-    map((items) => items.filter(({ tipo }) => tipo === 'egreso'))
-  );
-
-  protected readonly ingresoCount$ = this._ingresos$.pipe(
+  protected readonly ingresoCount$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'ingreso')),
     map((items) => items.count())
   );
 
-  protected readonly egresoCount$ = this._egresos$.pipe(
-    map((items) => items.count())
-  );
-
-  protected readonly totalIngresos$ = this._ingresos$.pipe(
+  protected readonly totalIngresos$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'ingreso')),
     map((items) => items.reduce((acum, { monto }) => acum + monto, 0))
   );
 
-  protected readonly totalEgresos$ = this._egresos$.pipe(
+  protected readonly egresoCount$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'egreso')),
+    map((items) => items.count())
+  );
+
+  protected readonly totalEgresos$ = this._list$.pipe(
+    map((items) => items.filter(({ tipo }) => tipo === 'egreso')),
     map((items) => items.reduce((acum, { monto }) => acum + monto, 0))
   );
 
   constructor(private store: Store<AppState>) {}
-
-  ngOnInit() {}
 }
