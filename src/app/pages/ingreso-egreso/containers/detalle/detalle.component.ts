@@ -6,6 +6,7 @@ import { AppState } from 'src/app/app.reducer';
 import { IngresoEgresoHttpService } from '../../core/services/ingreso-egreso-http.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { AppStateWithIngreso } from '../../core/store/ingreso-egreso.reducer';
 
 @Component({
   selector: 'detalle',
@@ -32,7 +33,7 @@ export class DetalleComponent {
     .pipe(map(({ items }) => items));
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<AppStateWithIngreso>,
     private ingresoEgresoHttp: IngresoEgresoHttpService,
     private router: Router
   ) {}

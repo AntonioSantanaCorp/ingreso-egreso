@@ -12,20 +12,30 @@ import { IngresoEgresoTableComponent } from './components/ingreso-egreso-table/i
 import { OrdenIngresoPipe } from './pipes/orden-ingreso.pipe';
 import { IngresoEgresoGraficaComponent } from './components/ingreso-egreso-grafica/ingreso-egreso-grafica.component';
 import { NgChartsModule } from 'ng2-charts';
+import { DashboardComponent } from './containers/dashboard/dashboard.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+import { ingresoEgresoReducer } from './core/store/ingreso-egreso.reducer';
 
-export const INGRESO_EGRESO_ROUTES: Routes = [
-  { path: '', component: EstadisticaComponent },
+const routes: Routes = [
   {
-    path: 'ingreso-egreso',
-    component: IngresoEgresoComponent,
-    data: { isEdit: false },
+    path: '',
+    component: DashboardComponent,
+    children: [
+      { path: '', component: EstadisticaComponent },
+      {
+        path: 'ingreso-egreso',
+        component: IngresoEgresoComponent,
+        data: { isEdit: false },
+      },
+      {
+        path: 'ingreso-egreso/:id',
+        component: IngresoEgresoComponent,
+        data: { isEdit: true },
+      },
+      { path: 'detalle', component: DetalleComponent },
+    ],
   },
-  {
-    path: 'ingreso-egreso/:id',
-    component: IngresoEgresoComponent,
-    data: { isEdit: true },
-  },
-  { path: 'detalle', component: DetalleComponent },
 ];
 
 @NgModule({
@@ -38,8 +48,18 @@ export const INGRESO_EGRESO_ROUTES: Routes = [
     TypeIngresoEgresoComponent,
     IngresoEgresoTableComponent,
     OrdenIngresoPipe,
+    DashboardComponent,
     IngresoEgresoGraficaComponent,
   ],
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, NgChartsModule],
+  imports: [
+    CommonModule,
+    StoreModule.forFeature('ingresosEgresos', ingresoEgresoReducer),
+    ReactiveFormsModule,
+    RouterModule,
+    NgChartsModule,
+    SharedModule,
+    RouterModule.forChild(routes),
+  ],
+  exports: [RouterModule],
 })
 export class IngresoEgresoModule {}

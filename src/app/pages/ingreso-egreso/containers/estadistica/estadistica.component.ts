@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, shareReplay } from 'rxjs';
 import { AppState } from 'src/app/app.reducer';
+import { AppStateWithIngreso } from '../../core/store/ingreso-egreso.reducer';
 
 @Component({
   selector: 'estadistica',
@@ -60,5 +61,5 @@ export class EstadisticaComponent {
     map((items) => items.reduce((acum, { monto }) => acum + monto, 0))
   );
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private store: Store<AppStateWithIngreso>) {}
 }

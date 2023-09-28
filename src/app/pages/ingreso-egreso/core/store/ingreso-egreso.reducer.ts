@@ -2,14 +2,19 @@ import { createReducer, on } from '@ngrx/store';
 import { IngresoEgreso } from '../models/main.model';
 import { addItem, setItems, unSetItems } from './ingreso-egreso.actions';
 import { List, Record } from 'immutable';
+import { AppState } from 'src/app/app.reducer';
 
 export class IngresoEgresoState extends Record<{ items: List<IngresoEgreso> }>({
   items: List([]),
 }) {}
 
+export interface AppStateWithIngreso extends AppState {
+  ingresosEgresos: IngresoEgresoState;
+}
+
 export const initialState = new IngresoEgresoState();
 
-export const igresoEgresoReducer = createReducer(
+export const ingresoEgresoReducer = createReducer(
   initialState,
   on(setItems, (state, { items }) =>
     state.set('items', List(items.map((e) => new IngresoEgreso({ ...e }))))

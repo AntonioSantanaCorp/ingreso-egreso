@@ -29,7 +29,7 @@ export const routes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes),
+    RouterModule,//.forChild(routes)
     LoginModule,
     RegisterModule,
   ],
