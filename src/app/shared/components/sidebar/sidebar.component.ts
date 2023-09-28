@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/pages/auth/core/services/auth.service';
 @Component({
@@ -11,11 +17,14 @@ import { AuthService } from 'src/app/pages/auth/core/services/auth.service';
           <div class="nav-link">
             <div class="user-wrapper">
               <div class="profile-image">
-                <img src="assets/images/faces-clipart/pic-1.png" alt="profile image" />
+                <img
+                  src="assets/images/faces-clipart/pic-1.png"
+                  alt="profile image"
+                />
               </div>
 
               <div class="text-wrapper">
-                <p class="profile-name">Cristobal Colón</p>
+                <p class="profile-name">{{ nombreUsuario }}</p>
                 <div>
                   <small class="designation text-muted">Gerente</small>
                 </div>
@@ -57,9 +66,15 @@ import { AuthService } from 'src/app/pages/auth/core/services/auth.service';
   styles: [],
 })
 export class SidebarComponent {
-  constructor(private authService: AuthService, private router: Router) {}
+  @Input()
+  public nombreUsuario: string | null = '';
+
+  @Output()
+  public logout = new EventEmitter<void>();
+
+  constructor() {}
 
   logOut() {
-    this.authService.logout().then(() => this.router.navigate(['/login']));
+    this.logout.emit();
   }
 }
